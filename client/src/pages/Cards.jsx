@@ -8,19 +8,13 @@ const Cards = () => {
             <div className='w-full flex flex-wrap  my-5 '>
                
                 <div className='w-1/2  p-4'>
-                    <div className='border bg-white shadow-md p-5 cursor-pointer rounded-lg w-full h-full flex flex-col items-center gap-4'>
+                    <div className='border bg-white shadow-md p-5 cursor-pointer rounded-lg w-full h-full flex flex-col items-center gap-4 hover:shadow-lg hover:bg-slate-100 hover:scale-105 transition ease-in-out delay-100'>
                         <div className='w-12 h-12 rounded-full border border-slate-700'></div>
                         <h1 className='text-center text-slate-700 font-bold'>César Mâncio Silva </h1>
                         <p>Hobbie</p>
                     </div>
                 </div>
-                <div className='w-1/2  p-4'>
-                    <div className='border bg-white shadow-md p-5 cursor-pointer rounded-lg w-full h-full flex flex-col items-center gap-4'>
-                        <div className='w-12 h-12 rounded-full border border-slate-700'></div>
-                        <h1 className='text-center text-slate-700 font-bold'>Alex Aparecido de Lima </h1>
-                        <p>Hobbie</p>
-                    </div>
-                </div>
+                
                 
                 
                 

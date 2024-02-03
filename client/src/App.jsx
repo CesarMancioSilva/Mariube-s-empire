@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { BrowserRouter,Routes,Route, } from 'react-router-dom'
-import Home from './pages/Home'
+import Login from './pages/Login'
 import Cards from './pages/Cards'
 import Header from './components/Header'
+import Signup from './pages/SignUp'
 
 
 function App() {
@@ -12,8 +13,9 @@ function App() {
       <BrowserRouter>
         <Header/>
         <Routes>
-          <Route path='/'element={<Home/>}/>
-          <Route path='/cards'element={<Cards/>}/>
+          <Route path='/login'element={<Login/>}/>
+          <Route path='/sign-up'element={<Signup/>}/>
+          <Route path='/'element={<Cards/>}/>
         </Routes>
       </BrowserRouter>
     </>
