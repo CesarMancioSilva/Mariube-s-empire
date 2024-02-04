@@ -23,7 +23,7 @@ const Signup = () => {
             console.log(result)
             console.log(result.data.message)
         })
-        .catch(error => console.log(error))
+        .catch(error => console.log(error.message))
     }
     return (
         <div className='mx-auto max-w-6xl '>

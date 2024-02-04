@@ -22,7 +22,7 @@ app.get('/',(req,res)=>{
     res.json({message:`Server is running on port ${PORT}`})
 })
 
-app.post('/sign-up',async (req,res)=>{
+app.post('/sign-up',async (req,res,next)=>{
     const {name,email,password} = req.body
     const newUser = new User({name,email,password})
     try{
@@ -30,10 +30,19 @@ app.post('/sign-up',async (req,res)=>{
         console.log("created",newUser)
         res.status(201).json(newUser)
     }catch(err){
-        console.log('catch',err)
-        res.json(err)
+        next(err)
     }
-    // await User.create(req.body)
-    // .then(user => res.json(user))
-    // .catch(err => res.json(err))
+//     await User.create(req.body)
+//     .then(user => res.json(user))
+//     .catch(err => res.json(err))
+})
+
+app.use((err,req,res,next)=>{
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Internal Server Error'
+    return res.status(statusCode).json({
+        success:false,
+        statusCode,
+        message,
+    })
 })
