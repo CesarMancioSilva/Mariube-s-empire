@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React,{useState,useEffect} from 'react';
 import { Link,useNavigate } from 'react-router-dom';
+import ConcludSignUp from '../components/ConcludSignUp';
 
 const Signup = () => {
     const [formData,setFormData] = useState({})
-    const [submitError,setSubmitError] = useState('teste')
+    const [submitError,setSubmitError] = useState()
     const navigate = useNavigate()
     const goLogin = ()=>{
         navigate('/login')
@@ -16,17 +17,45 @@ const Signup = () => {
             [e.target.id]:e.target.value
         })
     }
-    const handleSubmit=(e)=>{
+    
+    const handleSubmit = async(e)=>{
         e.preventDefault()
-        axios.post('http://localhost:3500/sign-up',formData)
-        .then(result => {
-            console.log(result)
-            console.log(result.data.message)
-        })
-        .catch(error => console.log(error.message))
+        console.log('a')
+        try{
+            const res = await fetch('http://localhost:3500/sign-up',
+            {
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                },
+                body:JSON.stringify(formData),
+            })
+            const data = await res.json()
+            console.log(data)
+            if(data.success === false){
+                setSubmitError(data.message);
+                console.log(data.message)
+                return
+            }
+            setSubmitError(null)
+            navigate('/login')
+        }catch(error){
+            setSubmitError(error.message)
+        }
+        
+        // axios.post('http://localhost:3500/sign-up',formData)
+        // .then(result => {
+        //     console.log(result)
+        //     console.log(result.data.message)
+        // })
+        // .catch(error => {
+        //     setSubmitError(error.message);
+        //     console.log(error)
+        // })
     }
     return (
-        <div className='mx-auto max-w-6xl '>
+        <div className='mx-auto max-w-6xl relative'>
+            {/* <ConcludSignUp/> */}
             <div className='mx-auto border max-w-lg shadow-md bg-slate-200 rounded-xl p-4 flex flex-col gap-4'>
                 <h1 className='font-bold text-xl'>Cadastrar usuário</h1>
                     <label className='w-full'> 
@@ -55,7 +84,7 @@ const Signup = () => {
                     </div>
                     
                     <textarea rows="5" className='border p-3 rounded-lg' onChange={handleChange} id='description'></textarea> */}
-                    {submitError}
+                    <p className='text-red-700'>{submitError}</p>
                     <button className='bg-slate-700 text-white rounded-lg p-2  hover:opacity-90 disabled:opacity-80'>
                         Cadastrar
                     </button>

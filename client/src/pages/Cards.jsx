@@ -10,10 +10,10 @@ const Cards = () => {
     return (
         <div>
             <div className='mx-auto  border max-w-5xl shadow-md bg-slate-200 p-3 rounded-lg flex justify-between items-center px-8'>
-                <h1 className='text-2xl font-bold text-slate-700'>Monte seu pedido!</h1>
+                {/* <h1 className='text-2xl font-bold text-slate-700'>Monte seu pedido!</h1>
                 <div className='h-7  border border-slate-700'></div>
-                <div className='h-7  border border-slate-700'></div>
-                <div className=' flex gap-4'>
+                <div className='h-7  border border-slate-700'></div> */}
+                <div className=' flex w-full justify-between'>
 
                     <button className='bg-slate-200 ml-4 text-slate-700 border-b-4 font-bold border-slate-700 rounded-lg p-2  hover:opacity-90 disabled:opacity-80 hover:bg-slate-300 flex gap-3 items-center px-4'><MdOutlineDinnerDining /> Pratos</button>
                     <button className='bg-slate-200 ml-4 text-slate-700 border-b-4 font-bold border-slate-700 rounded-lg p-2  hover:opacity-90 disabled:opacity-80 hover:bg-slate-300 flex gap-3 items-center px-4'><MdOutlineLunchDining /> Lanche</button>

@@ -4,6 +4,7 @@ import { Link,useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [message,setMessage] = useState()
+    const [submitError,setSubmitError] = useState()
     const [formData,setFormData] = useState({})
     const navigate = useNavigate()
     const goSignUp = ()=>{
@@ -20,26 +21,55 @@ const Login = () => {
         })
         console.log(formData)
     }
-    const handleSubmit=(e)=>{
+    const handleSubmit = async(e)=>{
         e.preventDefault()
-        axios.post('http://localhost:3500',formData)
-        .then(result => console.log(result))
-        .catch(error => console.log(error))
+        console.log('a')
+        try{
+            const res = await fetch('http://localhost:3500/login',
+            {
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                },
+                body:JSON.stringify(formData),
+            })
+            const data = await res.json()
+            console.log(data)
+            if(data.success === false){
+                setSubmitError(data.message);
+                console.log(data.message)
+                return
+            }
+            setSubmitError(null)
+            navigate('/')
+        }catch(error){
+            setSubmitError(error.message)
+        }
+        
+        // axios.post('http://localhost:3500/sign-up',formData)
+        // .then(result => {
+        //     console.log(result)
+        //     console.log(result.data.message)
+        // })
+        // .catch(error => {
+        //     setSubmitError(error.message);
+        //     console.log(error)
+        // })
     }
     return (
-        <div className='  border border-black '>
+        <div className=' '>
             <div className='mx-auto border max-w-lg shadow-md bg-slate-200 rounded-xl p-4 flex flex-col gap-4'>
                 <h1 className='font-bold text-xl'>Adicione um novo usuário</h1>
                 <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
                     <label className='w-full'> 
                         <p>Email</p>
-                        <input type="text" className='w-full border p-3 rounded-lg' id='name' onChange={handleChange}/>
+                        <input type="text" className='w-full border p-3 rounded-lg' id='email' onChange={handleChange}/>
                     </label>
                     <label className='w-full'> 
                         <p>Senha</p>
-                        <input type="text" className='w-full border p-3 rounded-lg' id='name' onChange={handleChange}/>
+                        <input type="password" className='w-full border p-3 rounded-lg' id='password' onChange={handleChange}/>
                     </label>
-                    
+                    <p className='text-red-700'>{submitError}</p>
                     <button className='bg-slate-700 block text-white rounded-lg p-2   hover:opacity-90 disabled:opacity-80'>
                         Entrar
                     </button>
