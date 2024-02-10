@@ -9,7 +9,7 @@ import { MdOutlineDinnerDining } from "react-icons/md";
 const Cards = () => {
     return (
         <div>
-            <div className='mx-auto  border max-w-5xl shadow-md bg-slate-200 p-3 rounded-lg flex justify-between items-center px-8'>
+            <div className='mx-auto  border border-black max-w-5xl shadow-md bg-slate-200 p-3 rounded-lg flex justify-between items-center px-8'>
                 {/* <h1 className='text-2xl font-bold text-slate-700'>Monte seu pedido!</h1>
                 <div className='h-7  border border-slate-700'></div>
                 <div className='h-7  border border-slate-700'></div> */}
@@ -23,32 +23,12 @@ const Cards = () => {
                 </div>
                 
             </div>
-            <div className='mx-auto  border max-w-5xl shadow-md bg-slate-200 p-3 rounded-lg my-8'>
+            <div className='mx-auto  border border-black max-w-5xl shadow-md bg-slate-200 p-3 rounded-lg my-8'>
                 
                 <div className='w-full flex flex-wrap  my-5 '>
                 
                     
-                    <div className='w-1/3  p-4'>
-                        <div className='border bg-white shadow-md p-5 cursor-pointer rounded-lg w-full h-full flex flex-col  gap-4 hover:shadow-lg  hover:scale-105 transition ease-in-out delay-100'>
-                            <div className='w-full h-48 rounded-md border border-slate-700'></div>
-                            <h1 className=' text-slate-700 font-bold'>Arroz feijão e panqueca de carne </h1>
-                            <p>R$: 18,00</p>
-                        </div>
-                    </div>
-                    <div className='w-1/3  p-4'>
-                        <div className='border bg-white shadow-md p-5 cursor-pointer rounded-lg w-full h-full flex flex-col  gap-4 hover:shadow-lg  hover:scale-105 transition ease-in-out delay-100'>
-                            <div className='w-full h-48 rounded-md border border-slate-700'></div>
-                            <h1 className=' text-slate-700 font-bold'>Arroz feijão e panqueca de carne </h1>
-                            <p>R$: 18,00</p>
-                        </div>
-                    </div>
-                    <div className='w-1/3  p-4'>
-                        <div className='border bg-white shadow-md p-5 cursor-pointer rounded-lg w-full h-full flex flex-col  gap-4 hover:shadow-lg  hover:scale-105 transition ease-in-out delay-100'>
-                            <div className='w-full h-48 rounded-md border border-slate-700'></div>
-                            <h1 className=' text-slate-700 font-bold'>Arroz feijão e panqueca de carne </h1>
-                            <p>R$: 18,00</p>
-                        </div>
-                    </div>
+                  
                     <div className='w-1/3  p-4'>
                         <div className='border bg-white shadow-md p-5 cursor-pointer rounded-lg w-full h-full flex flex-col  gap-4 hover:shadow-lg  hover:scale-105 transition ease-in-out delay-100'>
                             <div className='w-full h-48 rounded-md border border-slate-700'></div>

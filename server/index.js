@@ -6,11 +6,17 @@ const User = require('./models/Users.jsx');
 const ErrorHandler  = require('./utils/erro.jsx');
 const jwt = require('jsonwebtoken')
 const app = express()
+const cookieParser = require('cookie-parser')
 const PORT = 3500;
 require('dotenv').config()
-app.use(cors())
-app.use(express.json())
 
+app.use(express.json())
+app.use(cookieParser());
+const corsOptions = {
+    origin: true, //included origin as true
+    credentials: true, //included credentials as true
+};
+app.use(cors(corsOptions))
 app.listen(PORT,()=>{
     console.log(`the server is running on port ${PORT}`)
 })
@@ -46,24 +52,53 @@ app.post('/login',async(req,res,next)=>{
     try{
         const validUser = await User.findOne({email})
         if(!validUser) return next(ErrorHandler(404,'User not found!'));
-        console.log('first handler')
+        // console.log('first handler')
         const validPassword = bcryptjs.compareSync(password,validUser.password)
         if(!validPassword) return next(ErrorHandler(401,'Wrong cridentials!'))
-        console.log('second handler')
+        // console.log('second handler')
         const token = jwt.sign({id: validUser._id}, process.env.JWT_SECRET)
         const {password:pass,...rest} = validUser._doc
-        res.cookie('acces_token',token,{httpOnly:true}).status(200).json({rest})
+        res.cookie('token',token,{httpOnly:true}).status(200).json({rest,token})
     }catch(err){
         console.log('catch')
         next(err)
     }
 })
 
+app.post('/updateUser/:id',async(req,res,next)=>{
+    const token = req.cookies.token;
+    console.log("token: "+token)
+    console.log(req.body)
+    if(!token) return next(ErrorHandler(401,'Unauthorized'));
+    console.log('passou')
+    jwt.verify(token,process.env.JWT_SECRET,((error,user)=>{
+        if(error) return next(ErrorHandler(403,'Forbidden'))
+        req.user = user
+    }))
+    if(req.user.id != req.params.id) return next(ErrorHandler(401,'You can only update your own account'))
+    try{
+        if(req.body.password){
+            req.body.password = bcryptjs.hashSync(req.body.password,10)
+        }
+        console.log("valid"+req.body)
+        const updatedUser = await User.findByIdAndUpdate(req.params.id,{
+            $set:{
+                username:req.body.username,
+                email:req.body.email,
+                password:req.body.password
+            }
+        },{new:true})
+        const {password, ...rest} = updatedUser._doc;
+        res.status(200).json(rest)
+    }catch(error){
+        next(error)
+    }
+})
 
 
 
 app.use((err,req,res,next)=>{
-    console.log(err)
+    // console.log(err)
     const statusCode = err.statusCode || 500;
     const message = err.message || 'Internal Server Error'
     return res.status(statusCode).json({

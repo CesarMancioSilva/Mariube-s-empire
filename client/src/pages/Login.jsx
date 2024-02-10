@@ -1,12 +1,14 @@
 import axios from 'axios';
 import React,{useState,useEffect} from 'react';
 import { Link,useNavigate } from 'react-router-dom';
-
+import {useDispatch, useSelector} from 'react-redux'
+import { signInStart,signInSucces,signInFailure } from '../redux/user/userSlice';
 const Login = () => {
     const [message,setMessage] = useState()
-    const [submitError,setSubmitError] = useState()
+    const {error:submitError} = useSelector((state)=>state.user)
     const [formData,setFormData] = useState({})
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const goSignUp = ()=>{
         navigate('/sign-up')
     }
@@ -36,14 +38,13 @@ const Login = () => {
             const data = await res.json()
             console.log(data)
             if(data.success === false){
-                setSubmitError(data.message);
-                console.log(data.message)
+                dispatch(signInFailure(data.message))
                 return
             }
-            setSubmitError(null)
+            dispatch(signInSucces(data))
             navigate('/')
         }catch(error){
-            setSubmitError(error.message)
+            dispatch(signInFailure(error.message))
         }
         
         // axios.post('http://localhost:3500/sign-up',formData)
