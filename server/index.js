@@ -7,6 +7,7 @@ const ErrorHandler  = require('./utils/erro.jsx');
 const jwt = require('jsonwebtoken')
 const app = express()
 const cookieParser = require('cookie-parser')
+const multer =require('multer')
 const PORT = 3500;
 require('dotenv').config()
 
@@ -46,6 +47,8 @@ app.post('/sign-up',async (req,res,next)=>{
     }
 })
 
+
+
 app.post('/login',async(req,res,next)=>{
     const {email,password} = req.body
     // console.log(process.env)
@@ -65,12 +68,51 @@ app.post('/login',async(req,res,next)=>{
     }
 })
 
+const Storage = multer.diskStorage({
+    destination:(req,file,cb)=>{
+        cb(null,'uploads')
+    },
+    filename:(req,file,cb)=>{
+        cb(null,file.originalname)
+    }
+})
+const upload = multer({
+    storage:Storage
+}).single('testImage')
+
+app.post('/profileImage/:id',async(req,res,next)=>{
+    const token = req.cookies.token;
+    console.log('token: '+token)
+    if(!token) return next(ErrorHandler(401,'Unauthorized'));
+    
+    jwt.verify(token,process.env.JWT_SECRET,((error,user)=>{
+        if(error) return next(ErrorHandler(403,'Forbidden'))
+        console.log(user)
+        req.user = user
+    }))
+    if(req.user.id != req.params.id) return next(ErrorHandler(401,'You can only update your own account'))
+    console.log('tudo certo')
+    console.log(req.body)
+    try{
+        
+        const atualPhoto = await User.findOne({_id:req.user.id},'photoURL')
+        console.log(atualPhoto.photoURL)
+        const updatedUser = await User.Update(
+            {_id:req.user.phoo}
+            ,{new:true})
+        console.log('updated: '+ updatedUser)
+        const {password, ...rest} = updatedUser._doc;
+        
+        res.status(200).json({rest})
+    }catch(err){
+        next(err)
+    }
+})
+
 app.post('/updateUser/:id',async(req,res,next)=>{
     const token = req.cookies.token;
-    console.log("token: "+token)
-    console.log(req.body)
     if(!token) return next(ErrorHandler(401,'Unauthorized'));
-    console.log('passou')
+    
     jwt.verify(token,process.env.JWT_SECRET,((error,user)=>{
         if(error) return next(ErrorHandler(403,'Forbidden'))
         req.user = user
@@ -83,13 +125,14 @@ app.post('/updateUser/:id',async(req,res,next)=>{
         console.log("valid"+req.body)
         const updatedUser = await User.findByIdAndUpdate(req.params.id,{
             $set:{
-                username:req.body.username,
+                name:req.body.name,
                 email:req.body.email,
                 password:req.body.password
             }
         },{new:true})
         const {password, ...rest} = updatedUser._doc;
-        res.status(200).json(rest)
+
+        res.status(200).json({rest})
     }catch(error){
         next(error)
     }

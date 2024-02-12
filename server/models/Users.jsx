@@ -1,5 +1,15 @@
 const mongoose = require('mongoose')
 
+const UserImgSchema = new mongoose.Schema({
+    photoName:{
+        type:String,
+    },
+    photoUrl:{
+        type:String,
+        data:Buffer,
+    }
+})
+
 const UserSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -15,10 +25,18 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    photoURL:{
-        type:String,
-        default:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTx4ETXIMlUwZYiZuG1B8eLRTu-oDZmV4lW9tuIe3lmIA&s'
+    photo:{
+        type:[UserImgSchema],
+        default:[{
+            photoName:'defaultImage',
+            photoUrl:'https://firebasestorage.googleapis.com/v0/b/practrest.appspot.com/o/profileIMGS%2Fimages.jpg?alt=media&token=0cd2fd44-1116-4b72-bedc-5e53548614db'
+        }]
     },
+    // photoURL:{
+    //     type:String,
+    //     data:Buffer,
+    //     default:'https://firebasestorage.googleapis.com/v0/b/practrest.appspot.com/o/profileIMGS%2Fimages.jpg?alt=media&token=0cd2fd44-1116-4b72-bedc-5e53548614db'
+    // },
     admin:{
         type:String,
         default:false

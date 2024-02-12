@@ -21,11 +21,9 @@ const Login = () => {
             ...formData,
             [e.target.id]:e.target.value
         })
-        console.log(formData)
     }
     const handleSubmit = async(e)=>{
         e.preventDefault()
-        console.log('a')
         try{
             const res = await fetch('http://localhost:3500/login',
             {
@@ -33,6 +31,7 @@ const Login = () => {
                 headers:{
                     'Content-Type':'application/json',
                 },
+                credentials:'include',
                 body:JSON.stringify(formData),
             })
             const data = await res.json()

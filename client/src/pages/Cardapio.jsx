@@ -4,12 +4,14 @@ import { BiDrink } from "react-icons/bi";
 import { LuDessert } from "react-icons/lu";
 import { MdOutlineLunchDining } from "react-icons/md";
 import { MdOutlineDinnerDining } from "react-icons/md";
+import { IoPizzaOutline } from "react-icons/io5";
 
+// <IoPizzaOutline />
 
 const Cards = () => {
     return (
         <div>
-            <div className='mx-auto  border border-black max-w-5xl shadow-md bg-slate-200 p-3 rounded-lg flex justify-between items-center px-8'>
+            <div className='mx-auto  border border-black max-w-5xl shadow-md bg-slate-200 p-3 rounded-lg flex justify-between items-center px-8 flex-wrap'>
                 {/* <h1 className='text-2xl font-bold text-slate-700'>Monte seu pedido!</h1>
                 <div className='h-7  border border-slate-700'></div>
                 <div className='h-7  border border-slate-700'></div> */}
@@ -17,6 +19,7 @@ const Cards = () => {
 
                     <button className='bg-slate-200 ml-4 text-slate-700 border-b-4 font-bold border-slate-700 rounded-lg p-2  hover:opacity-90 disabled:opacity-80 hover:bg-slate-300 flex gap-3 items-center px-4'><MdOutlineDinnerDining /> Pratos</button>
                     <button className='bg-slate-200 ml-4 text-slate-700 border-b-4 font-bold border-slate-700 rounded-lg p-2  hover:opacity-90 disabled:opacity-80 hover:bg-slate-300 flex gap-3 items-center px-4'><MdOutlineLunchDining /> Lanche</button>
+                    <button className='bg-slate-200 ml-4 text-slate-700 border-b-4 font-bold border-slate-700 rounded-lg p-2  hover:opacity-90 disabled:opacity-80 hover:bg-slate-300 flex gap-3 items-center px-4'><IoPizzaOutline /> Pizza</button>
                     <button className='bg-slate-200 ml-4 text-slate-700 border-b-4 font-bold border-slate-700 rounded-lg p-2  hover:opacity-90 disabled:opacity-80 hover:bg-slate-300 flex gap-3 items-center px-4'><BiDrink/> Bebida</button>
                     <button className='bg-slate-200 ml-4 text-slate-700 border-b-4 font-bold border-slate-700 rounded-lg p-2  hover:opacity-90 disabled:opacity-80 hover:bg-slate-300 flex gap-3 items-center px-4'><LuDessert /> Sobremesa</button>
                     
@@ -58,14 +61,31 @@ const Cards = () => {
                     
                     
                 </div>
-                <div className='flex items-center border border-black'>
+                <div className='flex items-center gap-8 mb-4'>
                     
-                    <Link to='/'>
-                        <button className='bg-slate-700 ml-4 mb-4 text-white rounded-lg p-2  hover:opacity-90 disabled:opacity-80'>
+                    
+                        <button className='bg-slate-700 ml-4  text-white rounded-lg p-2  hover:opacity-90 disabled:opacity-80 block'>
                             Voltar ao ínicio
                         </button>
-                    </Link>
-                    <div>kk</div>
+                        <nav aria-label="Page navigation example">
+                            <ul class="inline-flex -space-x-px text-base h-10 shadow-md border border-slate-500 rounded-md">
+                                <li>
+                                <a href="#" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 ">Previous</a>
+                                </li>
+                                <li>
+                                <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">1</a>
+                                </li>
+                                <li>
+                                <a href="#" aria-current="page" class="flex items-center justify-center px-4 h-10 text-gray-500 border border-gray-300 bg-blue-50 hover:bg-slate-200 hover:text-blue-700 ">2</a>
+                                </li>
+                                <li>
+                                <a href="#" aria-current="page" class="flex items-center justify-center px-4 h-10 text-gray-500 border border-slate-700 bg-white hover:bg-slate-200 hover:text-blue-700 ">2</a>
+                                </li>
+                                <li>
+                                <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 ">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
 
                 </div>
             </div>
