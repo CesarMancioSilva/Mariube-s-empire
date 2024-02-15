@@ -1,14 +1,8 @@
 const mongoose = require('mongoose')
 
-const UserImgSchema = new mongoose.Schema({
-    photoName:{
-        type:String,
-    },
-    photoUrl:{
-        type:String,
-        data:Buffer,
-    }
-})
+// const UserImgSchema = new mongoose.Schema({
+   
+// })
 
 const UserSchema = new mongoose.Schema({
     name:{
@@ -26,11 +20,15 @@ const UserSchema = new mongoose.Schema({
         required:true
     },
     photo:{
-        type:[UserImgSchema],
-        default:[{
-            photoName:'defaultImage',
-            photoUrl:'https://firebasestorage.googleapis.com/v0/b/practrest.appspot.com/o/profileIMGS%2Fimages.jpg?alt=media&token=0cd2fd44-1116-4b72-bedc-5e53548614db'
-        }]
+        photoName:{
+            type:String,
+            default:'imageDefault'
+        },
+        photoUrl:{
+            type:String,
+            data:Buffer,
+            default:'https://firebasestorage.googleapis.com/v0/b/practrest.appspot.com/o/profileIMGS%2Fimages.jpg?alt=media&token=1937ce94-8e11-4aab-a4c9-f48798d87071'
+        }
     },
     // photoURL:{
     //     type:String,
@@ -38,7 +36,7 @@ const UserSchema = new mongoose.Schema({
     //     default:'https://firebasestorage.googleapis.com/v0/b/practrest.appspot.com/o/profileIMGS%2Fimages.jpg?alt=media&token=0cd2fd44-1116-4b72-bedc-5e53548614db'
     // },
     admin:{
-        type:String,
+        type:Boolean,
         default:false
     }
 },{timestamps:true})

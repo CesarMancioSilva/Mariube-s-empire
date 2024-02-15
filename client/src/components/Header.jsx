@@ -1,16 +1,26 @@
-import React,{useState} from 'react';
+import React,{useEffect, useState} from 'react';
 import {Link,NavLink} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import { IoMenuOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import BackgroundPop from './backgroundPop';
+import { useRef } from 'react';
+
 
 
 
 const Header = () => {
     const {currentUser} = useSelector(state => state.user)
     const [menu,setMenu] = useState(false)
-    // console.log(currentUser)
+    const [admin,setAdmin] = useState(false)
+    // const admin = useRef()
+    useEffect(()=>{
+        if(currentUser != null){
+            setAdmin(currentUser.rest.admin)
+            console.log('atualizou')
+        }
+    },)
+    console.log(admin)
     const links= [
         {
             text:"Inicio",
@@ -21,6 +31,7 @@ const Header = () => {
             link:'/cardapio'
         },
     ]
+    // console.log(currentUser.rest.admin)
     return (
         <header className='bg-slate-200  shadow-md mx-auto p-3 mb-8 fixed w-full top-0 z-30'>
             <div className='max-w-5xl flex justify-between align-middle mx-auto items-center'>
@@ -41,19 +52,21 @@ const Header = () => {
                             </NavLink>
                         ))}
                         
-                        {currentUser ? (
+                        {currentUser  && admin == 'true'  ? (
+                            <NavLink to='/reserva' className={({isActive})=> isActive ? "border-b border-black p-1 text-slate-700 font-bold": "hover:scale-110 hover:font-bold transition ease-in-out delay-100"}>
+                                Painel
+                            </NavLink>
+                        ) : currentUser  ? (
                             <NavLink to='/reserva' className={({isActive})=> isActive ? "border-b border-black p-1 text-slate-700 font-bold": "hover:scale-110 hover:font-bold transition ease-in-out delay-100"}>
                                 Reserva
-                            </NavLink>
-                        ):(
-                            ''  
-                        )}
+                            </NavLink>  
+                        ):('')}
                         
                     </ul>
                     {currentUser ? (
                         <Link to='/profile' className='w-full  cursor-pointer'>
                             <label className='flex gap-2 flex-col w-full items-start border-b cursor-pointer cell:border-none border-black'>
-                                <img src={currentUser.rest.photo[0].photoUrl} alt="profile picture" className='w-8 h-8 rounded-full border border-black cursor-pointer'/>
+                                <img src={currentUser.rest.photo.photoUrl} alt="profile picture" className='w-8 h-8 rounded-full border-[3px] border-slate-700 cursor-pointer'/>
                                 <div className='block cell:hidden cursor-pointer'>
                                     <p className='break-all'>{currentUser.rest.name}</p>
                                 </div>

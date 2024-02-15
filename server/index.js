@@ -9,7 +9,14 @@ const app = express()
 const cookieParser = require('cookie-parser')
 const multer =require('multer')
 const PORT = 3500;
+const firebase = require('firebase-admin');
 require('dotenv').config()
+
+const firebaseConfig = {
+    // ...
+    storageBucket: 'gs://practrest.appspot.com'
+  };
+firebase.initializeApp(firebaseConfig);
 
 app.use(express.json())
 app.use(cookieParser());
@@ -68,21 +75,12 @@ app.post('/login',async(req,res,next)=>{
     }
 })
 
-const Storage = multer.diskStorage({
-    destination:(req,file,cb)=>{
-        cb(null,'uploads')
-    },
-    filename:(req,file,cb)=>{
-        cb(null,file.originalname)
-    }
-})
-const upload = multer({
-    storage:Storage
-}).single('testImage')
+
 
 app.post('/profileImage/:id',async(req,res,next)=>{
     const token = req.cookies.token;
-    console.log('token: '+token)
+    // console.log(req.user)
+    // console.log('token: '+token)
     if(!token) return next(ErrorHandler(401,'Unauthorized'));
     
     jwt.verify(token,process.env.JWT_SECRET,((error,user)=>{
@@ -92,15 +90,29 @@ app.post('/profileImage/:id',async(req,res,next)=>{
     }))
     if(req.user.id != req.params.id) return next(ErrorHandler(401,'You can only update your own account'))
     console.log('tudo certo')
-    console.log(req.body)
+    
     try{
         
-        const atualPhoto = await User.findOne({_id:req.user.id},'photoURL')
-        console.log(atualPhoto.photoURL)
-        const updatedUser = await User.Update(
-            {_id:req.user.phoo}
+        // const currentUserImg = await User.find({_id:req.user.id},{})
+        // console.log(currentUserImg[0].photo.photoUrl)
+        // if(!(currentUserImg[0].photo.photoUrl === 'https://firebasestorage.googleapis.com/v0/b/practrest.appspot.com/o/profileIMGS%2Fimages.jpg?alt=media&token=1937ce94-8e11-4aab-a4c9-f48798d87071')){
+        //     console.log('apagando foto')
+        //     await firebase.storage().bucket().file("profileIMGS/"+currentUserImg[0].photo.photoName).delete();
+        // }else{
+        //     console.log('ué')
+        // }
+        
+        
+        const updatedUser = await User.findOneAndUpdate(
+            {_id:req.user.id},
+            {
+                $set:{
+                    'photo.photoName':req.body.name,
+                    'photo.photoUrl':req.body.imgUrl
+                },
+            }
             ,{new:true})
-        console.log('updated: '+ updatedUser)
+        // console.log('updated: '+ updatedUser)
         const {password, ...rest} = updatedUser._doc;
         
         res.status(200).json({rest})

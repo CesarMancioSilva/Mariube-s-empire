@@ -6,6 +6,8 @@ import { MdDateRange } from "react-icons/md";
 import { updateUserSuccess } from '../redux/user/userSlice';
 import { signOut } from '../redux/user/userSlice';
 
+
+
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import app from '../firebase';
 
@@ -20,14 +22,16 @@ const Profile = () => {
     const [editing,setEditing] = useState(false)
     const [error,setError] = useState('')
     
-    console.log(currentUser.rest.photo)
 
     const [changingImage,setChangingImage] = useState(false)
     const [selectedFile, setSelectedFile] = useState()
     const [preview, setPreview] = useState()
     const [image,setImage] = useState()
     const [imgPerc,setImgPerc] = useState(0)
+
     const [input,setInput] = useState()
+    const prevInput = useRef(input)
+    
     const imgBtnRef = useRef()
     const imgRef = useRef()
     useEffect(() => {
@@ -115,8 +119,13 @@ const Profile = () => {
         );
     }
     useEffect(()=>{
-        updateDB()
-        console.log(input)
+        
+        if (prevInput.current !== input){
+            console.log(input)
+            updateDB()
+            console.log('disparou useEffect do bancoo')
+            prevInput.current = input;
+        }
     },[input])
     const updateDB=async()=>{
         try{
@@ -166,6 +175,7 @@ const Profile = () => {
     }
     const handleSubmit =async(e)=>{
         e.preventDefault()
+        console.log(formData)
         if(passwordRef.current.value === confirmPasswordRef.current.value){
             
             try{
@@ -178,17 +188,19 @@ const Profile = () => {
                     body:JSON.stringify(formData)
                 })
                 const data = await res.json();
+                console.log(data)
                 if(data.success === false){
                     console.log(data.message)
                     return
                 }
 
                 dispatch(updateUserSuccess(data))
+                
                 setEditing(false)
                 setError('')
                 setFormData({})
-                nameRef.current.value = currentUser.rest.name
-                emailRef.current.value = currentUser.rest.email
+                nameRef.current.value = data.rest.name
+                emailRef.current.value = data.rest.email
                 passwordRef.current.value = ''
                 confirmPasswordRef.current.value = ''
             }catch(error){
@@ -200,18 +212,18 @@ const Profile = () => {
         
     }
     return (
-        <div className=' flex border border-black flex-col lg:flex-row items-center lg:items-start lg:justify-between gap-5  mx-auto  max-w-5xl  mb-5 '>
+        <div className=' flex flex-col lg:flex-row items-center lg:items-start lg:justify-between gap-5  mx-auto  max-w-5xl  mb-5 '>
             {/* {changingImage === false ? (''):( */}
                 {/* <div> */}
                 {changingImage === false ? (''):(
                     <div className='absolute top-0 flex items-center justify-center left-0 bg-black z-10 w-screen h-screen opacity-35'></div>
                     )}
                     {changingImage === false ? (''):(
-                    <div className='p-4 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 min-w-[502px] bg-slate-200 opacity-100 absolute rounded-xl shadow-md z-20  break-all'>
-                        <div className='flex gap-8'>
+                    <div className='p-4 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-auto sm:min-w-[502px] bg-slate-200 opacity-100 absolute rounded-xl shadow-md z-20  break-all'>
+                        <div className='flex flex-col items-center sm:flex-row gap-8'>
                             <div>
                             <h1>{preview === '' ? 'imagem atual':'Imagem selecionada'}</h1>
-                            {preview ? <img  className='border min-w-[166px] min-h-[166px] max-w-[166px] max-h-[166px] border-slate-600 rounded-xl mt-4' name='image' src={preview} width='166px' height='166px'/>: <img src={currentUser.rest.photo[0].photoUrl} alt="" className='border border-slate-600 rounded-xl mt-4' />}
+                            {preview ? <img  className='border-4 w-[166px] h-[166px] border-slate-700 rounded-xl mt-4' name='image' src={preview} width='166px' height='166px'/>: <img src={currentUser.rest.photo.photoUrl} alt="" className='border-4 w-[166px] h-[166px] border-slate-700 rounded-xl mt-4' />}
                             <form action="" id='imageForm' onSubmit={handlePhotoSubmit} hidden>
                                 <input type='file' ref={imgRef}name='image' accept='image/*' id='image'  onChange={onSelectFile}/>
                                 {/* onChange={onSelectFile} */}
@@ -219,7 +231,7 @@ const Profile = () => {
                             </div>
                             <div className='break-words'>
                                 <h1 className='break-words'>Selecione uma imagem para seu perfil</h1>
-                                <label className=' mt-4 border border-dashed border-black rounded-lg w-full h-[80%] flex flex-col items-center justify-center' htmlFor='image'>
+                                <label className=' mt-4 border border-dashed border-black rounded-lg w-full h-[164px] flex flex-col items-center justify-center' htmlFor='image'>
                                     <p>Clique aqui</p>
                                     <p>{imgPerc+"%"}</p>
                                     <p>imagem.png</p>
@@ -240,11 +252,11 @@ const Profile = () => {
 
 
             <form className="w-full sm:w-[70%] lg:w-3/5 h-full border shadow-md border-black bg-slate-200 rounded-xl p-4" onSubmit={handleSubmit}>
-                <div className='flex flex-col sm:flex-row'>
+                <div className='flex flex-col sm:flex-row gap-2'>
 
                     <div className='w-full sm:w-1/3 h-ful flex flex-col items-center sm:items-start'>
                         <input type="file" ref={fileRef} hidden accept='image/*'/>
-                        <img src={currentUser.rest.photoURL} alt="" className='border border-slate-600 rounded-xl sm:w-[80%] md:w-auto cursor-pointer' onClick={()=>setChangingImage(true)}/>
+                        <img src={currentUser.rest.photo.photoUrl} alt="" className=' border-[6px] border-slate-600 rounded-xl w-[160px] h-[170px] lg:w-[170px] lg-[180px] md:w-auto cursor-pointer' onClick={()=>setChangingImage(true)}/>
                         <p className='mt-1 font-bold text-slate-700'>Data de criação</p>
                         <p>{`${splitedDate[2]}/${splitedDate[1]}/${splitedDate[0]}`}</p>
                     </div>
@@ -280,7 +292,10 @@ const Profile = () => {
                 <p className='text-red-700 text-center'>{error}</p>
                 <div className='w-full flex justify-between text-red-700 mt-4'>
                     <p className='cursor-pointer hover:font-bold transition ease-in-out delay-100'>Apagar conta</p>
-                    <p className='cursor-pointer hover:font-bold transition ease-in-out delay-100'onClick={()=>dispatch(signOut())}>Sair da conta</p>
+                    <p className='cursor-pointer hover:font-bold transition ease-in-out delay-100'onClick={()=>{
+                        dispatch(signOut())
+                        localStorage.removeItem('token')
+                        }}>Sair da conta</p>
                 </div>
                 {/* <button className='bg-red-700 text-white rounded-lg p-2  hover:opacity-90 disabled:opacity-80 w-full mt-3' } type='button'>Sair</button> */}
             </form>
