@@ -3,7 +3,7 @@ import {Link,NavLink} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import { IoMenuOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
-import BackgroundPop from './backgroundPop';
+
 import { useRef } from 'react';
 
 
@@ -20,7 +20,7 @@ const Header = () => {
             console.log('atualizou')
         }
     },)
-    console.log(admin)
+
     const links= [
         {
             text:"Inicio",
@@ -53,7 +53,7 @@ const Header = () => {
                         ))}
                         
                         {currentUser  && admin == 'true'  ? (
-                            <NavLink to='/reserva' className={({isActive})=> isActive ? "border-b border-black p-1 text-slate-700 font-bold": "hover:scale-110 hover:font-bold transition ease-in-out delay-100"}>
+                            <NavLink to='/painel' className={({isActive})=> isActive ? "border-b border-black p-1 text-slate-700 font-bold": "hover:scale-110 hover:font-bold transition ease-in-out delay-100"}>
                                 Painel
                             </NavLink>
                         ) : currentUser  ? (
@@ -94,7 +94,7 @@ const Header = () => {
             </div>
             <div className='cell:hidden' hidden={menu === false ? true:false}>
 
-                <BackgroundPop />
+  
             </div>
         </header>
     );

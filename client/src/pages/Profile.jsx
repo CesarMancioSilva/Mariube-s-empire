@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import { FaRegTrashCan } from "react-icons/fa6";
 import { CgProfile } from "react-icons/cg";
 import { MdDateRange } from "react-icons/md";
-import { updateUserSuccess } from '../redux/user/userSlice';
+import { deleteUserSuccess, updateUserSuccess } from '../redux/user/userSlice';
 import { signOut } from '../redux/user/userSlice';
 
 
@@ -56,9 +56,7 @@ const Profile = () => {
         
         setSelectedFile(e.target.files[0])
     }
-    // useEffect(()=>{
-    //     image && uploadFile(image,"imgUrl")
-    // },[image])
+    
     const uploadFile=(file,fileType)=>{
         const storage = getStorage(app);
         const folder = fileType === "imgUrl" ? "profileIMGS/":"videos/";
@@ -211,15 +209,64 @@ const Profile = () => {
         }
         
     }
+
+    const [deleting,setDeleting] = useState(false)
+    const [deleteError,setDeleteError] = useState(null)
+    const deleteInput = useRef()
+    const handleCancelDelete =()=>{
+        setDeleting(!deleting)
+        setDeleteError(null)
+        deleteInput.current.value = ''
+    }
+    const handleDelete = async()=>{
+        console.log(deleteInput.current.value.toUpperCase())
+        if(deleteInput.current.value.toUpperCase() == 'APAGAR'){
+
+            setDeleteError(null)
+            try{
+                
+                const res = await fetch('http://localhost:3500/deleteUser/'+currentUser.rest._id,{
+                    method:'DELETE',
+                    credentials:'include',
+                })
+                const data = await res.json()
+                if(data.success === false){
+                    setDeleteError(data.message)
+                    return
+                }
+                console.log(data)
+                dispatch(deleteUserSuccess())
+            }catch(err){
+                console.log(err)
+            }
+        }else{
+            setDeleteError('A palarva não foi escrita corretamente')
+        }
+    }
     return (
         <div className=' flex flex-col lg:flex-row items-center lg:items-start lg:justify-between gap-5  mx-auto  max-w-5xl  mb-5 '>
-            {/* {changingImage === false ? (''):( */}
-                {/* <div> */}
+            
+                
                 {changingImage === false ? (''):(
-                    <div className='absolute top-0 flex items-center justify-center left-0 bg-black z-10 w-screen h-screen opacity-35'></div>
+                    <div className=' top-0 fixed flex items-center justify-center left-0 bg-black z-10 w-screen h-screen opacity-35'></div>
+                    )}
+                {deleting === false ? (''):(
+                    <div className='fixed top-0 flex items-center justify-center left-0 bg-black z-10 w-screen h-screen opacity-35'></div>
+                    )}
+                    {deleting === false ? (''):(
+                        <div className='p-4 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-auto sm:min-w-[502px] bg-slate-200 opacity-100 fixed rounded-xl shadow-md z-20 flex flex-col items-center gap-6  break-all'>
+                            <h1 className='text-xl text-slate-700 font-bold'>Apagar dados da conta</h1>
+                            <p>Escreva "APAGAR" para concluir a ação</p>
+                            <input ref={deleteInput} type="text" className='w-[70%] p-3 rounded-lg shadow-md border border-slate-700'  />
+                            <p className='text-red-700'>{deleteError}</p>
+                            <div className='w-[70%] flex gap-3'>
+                                <button className='bg-slate-700 text-white rounded-lg p-1  hover:opacity-90 disabled:opacity-80 w-1/2' onClick={handleDelete}>Confirmar</button>
+                                <button className='bg-slate-700 text-white rounded-lg p-1  hover:opacity-90 disabled:opacity-80 w-1/2' onClick={handleCancelDelete}>Cancelar</button>
+                            </div>
+                        </div>
                     )}
                     {changingImage === false ? (''):(
-                    <div className='p-4 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-auto sm:min-w-[502px] bg-slate-200 opacity-100 absolute rounded-xl shadow-md z-20  break-all'>
+                    <div className='p-4 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-auto sm:min-w-[502px] bg-slate-200 opacity-100 fixed rounded-xl shadow-md z-20  break-all'>
                         <div className='flex flex-col items-center sm:flex-row gap-8'>
                             <div>
                             <h1>{preview === '' ? 'imagem atual':'Imagem selecionada'}</h1>
@@ -291,7 +338,7 @@ const Profile = () => {
                 )}
                 <p className='text-red-700 text-center'>{error}</p>
                 <div className='w-full flex justify-between text-red-700 mt-4'>
-                    <p className='cursor-pointer hover:font-bold transition ease-in-out delay-100'>Apagar conta</p>
+                    <p className='cursor-pointer hover:font-bold transition ease-in-out delay-100' onClick={()=>setDeleting(true)}>Apagar conta</p>
                     <p className='cursor-pointer hover:font-bold transition ease-in-out delay-100'onClick={()=>{
                         dispatch(signOut())
                         localStorage.removeItem('token')

@@ -39,6 +39,40 @@ app.get('/',(req,res)=>{
     res.json({message:`Server is running on port ${PORT}`})
 })
 
+
+app.get('/clientsPainel/:id',async(req,res,next)=>{
+    const token = req.cookies.token;
+    // console.log(req.user)
+    console.log('token: '+token)
+    if(!token) return next(ErrorHandler(401,'Unauthorized'));
+    
+    jwt.verify(token,process.env.JWT_SECRET,((error,user)=>{
+        if(error) return next(ErrorHandler(403,'Forbidden'))
+        console.log(user)
+        req.user = user
+    }))
+    console.log(`userID:${req.user.id} paramID:${req.params.id}`)
+    if(req.user.id === req.params.id && req.user.id === '65cd5310890a97292cdbafbc'){
+        try{
+            const data = await User.find({})
+           
+            console.log(data)
+            res.status(200).json(data)
+        }catch(error){
+            next(error)
+        }
+        // console.log(User.find({}))
+    
+        
+        console.log('tudo certo')
+    }else{
+        return next(ErrorHandler(401,'Restrict access'))
+    } 
+   
+})
+
+
+
 app.post('/sign-up',async (req,res,next)=>{
     console.log('sign-up connected')
     const {name,email,password} = req.body
@@ -150,6 +184,25 @@ app.post('/updateUser/:id',async(req,res,next)=>{
     }
 })
 
+app.delete('/deleteUser/:id',async(req,res,next)=>{
+    console.log('userID: '+req.params.id)
+    const token = req.cookies.token;
+    console.log('token: '+token)
+    if(!token) return next(ErrorHandler(401,'Unauthorized'));
+    
+    jwt.verify(token,process.env.JWT_SECRET,((error,user)=>{
+        if(error) return next(ErrorHandler(403,'Forbidden'))
+        req.user = user
+    }))
+    if(req.user.id != req.params.id) return next(ErrorHandler(401,'You can only delete your own account'))
+    try{
+        await User.findByIdAndDelete(req.params.id)
+        console.log('deletou')
+        res.status(200).json({message:'User has been deleted...'})
+    }catch(error){
+        next(error)
+    }
+})
 
 
 app.use((err,req,res,next)=>{

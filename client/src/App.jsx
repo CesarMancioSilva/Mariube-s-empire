@@ -8,6 +8,7 @@ import Profile from './pages/Profile'
 import Home from './pages/Home'
 import PrivateRoute from './components/PrivateRoute'
 import Reserva from './pages/Reserva'
+import Painel from './pages/Painel'
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route element={<PrivateRoute/>}>
             <Route path='/profile' element={<Profile/>}/>
           </Route>
+          <Route path='/painel' element={<Painel/>}/>
         </Routes>
       </BrowserRouter>
     </>
