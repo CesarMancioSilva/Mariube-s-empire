@@ -16,36 +16,37 @@ const ClientePainel = (current) => {
 
     const [arrayBtn,setArrayBtn] = useState([])
     var preSet = []
-    const updatePagination =()=>{
-        preSet = []
-        for(let i=1;i<=totalPages;i++){
-            preSet.push({number:i})
-        }
-        console.log(preSet)
-        setArrayBtn(prevState=>{return preSet})
-        console.log(arrayBtn)
-    }
-    useEffect(()=>{
-        // updatePagination()
-
-    },[currentClientes])
-    // const arrayBtn = useRef([])
-    
-    // useEffect(()=>{
-    //     const preSet = []
-       
+    // const updatePagination =()=>{
+    //     preSet = []
     //     for(let i=1;i<=totalPages;i++){
     //         preSet.push({number:i})
-    //     } 
-    //     // setArrayBtn(preSet)
+    //     }
     //     console.log(preSet)
-    //     arrayBtn.current = preSet
-    //     nextPageTable()
-    //     previousPageTable()
-    // },[currentClientes])
-    // console.log(arrayBtn.current)
-    // // setArrayBtn(preSet)
-    // // console.log(currentClientes)
+    //     setArrayBtn(prevState=>{return preSet})
+    //     console.log(arrayBtn)
+    useEffect(()=>{
+        
+        // if(totalPages == 1){
+        //     setArrayBtn(false)
+        // }else if(totalPages == 2){
+        //     setArrayBtn({number:1},{number:2})
+        // }else if(totalPages == 3){
+        //     setArrayBtn({number:1},{number:2},{number:3})
+        // }else if(totalPages == 4){
+        //     setArrayBtn({number:1},{number:2},{number:3},{number:4})
+        // }
+        // const objects = btnMaker()
+    
+        console.log(arrayBtn)
+
+    },[currentClientes])
+//    const btnMaker =()=>{
+//         var preSet = []
+//         for(let i=1;i<=totalPages;i++){
+//                     preSet.push({number:i})
+//         }
+//         return preSet
+//    }
    
     
     useEffect(()=>{
@@ -56,10 +57,10 @@ const ClientePainel = (current) => {
                 )
             );
             setClientsDisplay(filteredData)
-            updatePagination()
+            // updatePagination()
         }else{
             setClientsDisplay(clients)
-            updatePagination()
+            // updatePagination()
         }
     },[searchFilter])
 
@@ -88,7 +89,7 @@ const ClientePainel = (current) => {
 
             setClients(data)
             setClientsDisplay(data)
-            updatePagination()
+            // updatePagination()
         }catch(err){
             console.log(err)
         }
@@ -96,7 +97,24 @@ const ClientePainel = (current) => {
     const [viewingUser,setViewingUser] = useState(false)
     const [userView,setUserView] = useState()
     
-    
+    const deleteUser=async()=>{
+        
+        try{
+            const res = await fetch('http://localhost:3500/adminDelete/'+userView._id,{
+                method:"DELETE",
+                credentials:'include'
+            })
+            const data = await res.json()
+            if(data.success === false){
+                console.log(data.message)
+                return
+            }
+            updateTable()
+            setViewingUser(!viewingUser)
+        }catch(error){
+            console.log(error)
+        }
+    }
     return (
         <div class="relative overflow-x-auto shadow-md rounded-lg bg-white">
             {viewingUser && (
@@ -138,8 +156,9 @@ const ClientePainel = (current) => {
                     <div className='flex border border-black w-full p-1'>
                         <div className='bg-white p-3 rounded-lg shadow-md border border-slate-700'>card</div>
                     </div>
+                    
                     <div className='flex justify-between mt-6'>
-                        <button className='bg-red-700 px-3 py-2 text-white rounded-md hover:opacity-85'>Apagar conta</button>
+                        <button className='bg-red-700 px-3 py-2 text-white rounded-md hover:opacity-85' onClick={deleteUser}>Apagar conta</button>
                         <button className='bg-slate-700 px-3 py-2 text-white rounded-md hover:opacity-85'onClick={()=>{
                             setViewingUser(false)
                             setUserView(null)
@@ -149,9 +168,9 @@ const ClientePainel = (current) => {
                 </div>
 
             )}
-            <div className='flex bg-white items-center gap-4'>
+            <div className='flex justify-between px-5 bg-white items-center gap-4'>
 
-            <div className='ml-5 my-4'>
+            <div className=' my-4'>
                 <label for="table-search" class="sr-only">Search</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -159,10 +178,10 @@ const ClientePainel = (current) => {
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                         </svg>
                     </div>
-                    <input type="text" id="table-search-users" class="block p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 " placeholder="Search for users" onChange={e=>setSearchFilter(e.target.value)}/>
+                    <input type="text" id="table-search-users" class="block p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 " placeholder="Procure por clientes" onChange={e=>setSearchFilter(e.target.value)}/>
                 </div>
             </div>
-            
+            <div className='font-bold text-slat-700 border-2 rounded-md border-slate-700 px-3 py-2'>{clientsDisplay.length} clientes cadastrados</div>
             </div>  
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 bg-white">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50=">
@@ -236,21 +255,22 @@ const ClientePainel = (current) => {
                                     <li>
                                     <a href="#" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 " onClick={previousPageTable}>Previous</a>
                                     </li>
-                                    {/* <li>
-                                    <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">1</a>
-                                    </li> */}
-                                    {arrayBtn && arrayBtn.map((item)=>(
+                                    <li>
+                                    <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 "> 
+                                    {currentPage} de {totalPages}</a>
+                                    </li>
+                                    {/* {arrayBtn && arrayBtn.map((item)=>(
                                         
                                         <li>
                                             <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ">{item.number}</a>
                                         </li>
-                                    ))}
+                                    ))} */}
                                     <li>
                                     <a href="#" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 "onClick={nextPageTable}>Next</a>
                                     </li>
                                 </ul>
                             </nav>
-                            <div>{clientsDisplay.length} resultados cadastrados</div>
+                            
                 
             </div>
         </div>

@@ -7,9 +7,10 @@ const ErrorHandler  = require('./utils/erro.jsx');
 const jwt = require('jsonwebtoken')
 const app = express()
 const cookieParser = require('cookie-parser')
-const multer =require('multer')
 const PORT = 3500;
 const firebase = require('firebase-admin');
+const Category = require('./models/Categories.jsx');
+const Order = require('./models/Order.jsx');
 require('dotenv').config()
 
 const firebaseConfig = {
@@ -21,7 +22,7 @@ firebase.initializeApp(firebaseConfig);
 app.use(express.json())
 app.use(cookieParser());
 const corsOptions = {
-    origin: true, //included origin as true
+    origin: true,//included origin as true
     credentials: true, //included credentials as true
 };
 app.use(cors(corsOptions))
@@ -52,7 +53,7 @@ app.get('/clientsPainel/:id',async(req,res,next)=>{
         req.user = user
     }))
     console.log(`userID:${req.user.id} paramID:${req.params.id}`)
-    if(req.user.id === req.params.id && req.user.id === '65cd5310890a97292cdbafbc'){
+    if(req.user.id === req.params.id && req.user.id === '65d23731eb4fa62797538460'){
         try{
             const data = await User.find({})
            
@@ -70,6 +71,7 @@ app.get('/clientsPainel/:id',async(req,res,next)=>{
     } 
    
 })
+
 
 
 
@@ -184,6 +186,8 @@ app.post('/updateUser/:id',async(req,res,next)=>{
     }
 })
 
+
+
 app.delete('/deleteUser/:id',async(req,res,next)=>{
     console.log('userID: '+req.params.id)
     const token = req.cookies.token;
@@ -203,6 +207,126 @@ app.delete('/deleteUser/:id',async(req,res,next)=>{
         next(error)
     }
 })
+
+app.delete('/adminDelete/:id',async(req,res,next)=>{
+    console.log('userID: '+req.params.id)
+    const token = req.cookies.token;
+    console.log('token: '+token)
+    if(!token) return next(ErrorHandler(401,'Unauthorized'));
+    
+    jwt.verify(token,process.env.JWT_SECRET,((error,user)=>{
+        if(error) return next(ErrorHandler(403,'Forbidden'))
+        req.user = user
+    }))
+
+    if(req.user.id != '65d23731eb4fa62797538460') return next(ErrorHandler(401,'You are not authorized'))
+    try{
+        await User.findByIdAndDelete(req.params.id)
+        res.status(200).json({message:'User has been deleted...'})
+    }catch(error){
+        next(error)
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+app.post('/signCategory',async(req,res,next)=>{
+    const token = req.cookies.token;
+    console.log('token: '+token)
+    console.log(req.body)
+    if(!token) return next(ErrorHandler(401,'Unauthorized'));
+    
+    jwt.verify(token,process.env.JWT_SECRET,((error,user)=>{
+        if(error) return next(ErrorHandler(403,'Forbidden'))
+        req.user = user
+    }))
+
+    if(req.user.id != '65d23731eb4fa62797538460') return next(ErrorHandler(401,'You are not authorized'))
+    const {name} = req.body
+    const newCategory = new Category({name:name})
+    try{
+        await newCategory.save()
+        console.log('created',newCategory)
+        res.status(201).json(newCategory)
+    }catch(error){
+        next(error)
+    }
+})
+
+app.post('/createOrder',async(req,res,next)=>{
+    const token = req.cookies.token;
+    console.log('token: '+token)
+    console.log(req.body)
+    if(!token) return next(ErrorHandler(401,'Unauthorized'));
+    
+    jwt.verify(token,process.env.JWT_SECRET,((error,user)=>{
+        if(error) return next(ErrorHandler(403,'Forbidden'))
+        req.user = user
+    }))
+
+    if(req.user.id != '65d23731eb4fa62797538460') return next(ErrorHandler(401,'You are not authorized'))
+
+    const {name,preço,photoName,photoUrl,categoria} = req.body
+    console.log(photoName)
+    const newOrder = new Order({
+        name:name,
+        preço:preço,
+        photo:{photoName:photoName,photoUrl:photoUrl},
+        category:categoria
+    })
+    try{
+        await newOrder.save()
+        console.log('created',newOrder)
+        res.status(201).json(newOrder)
+    }catch(err){
+        next(err)
+    }
+})
+
+app.get('/orders',async(req,res,next)=>{
+    const token = req.cookies.token;
+    console.log('token: '+token)
+    console.log(req.body)
+    if(!token) return next(ErrorHandler(401,'Unauthorized'));
+    
+    jwt.verify(token,process.env.JWT_SECRET,((error,user)=>{
+        if(error) return next(ErrorHandler(403,'Forbidden'))
+        req.user = user
+    }))
+
+    if(req.user.id != '65d23731eb4fa62797538460') return next(ErrorHandler(401,'You are not authorized'))
+    try{
+        const data = await Order.find({})
+       
+        console.log(data)
+        res.status(200).json(data)
+    }catch(error){
+        next(error)
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.use((err,req,res,next)=>{
